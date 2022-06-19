@@ -1,12 +1,14 @@
-# Python BlackJack v0.1 Copyright Jameson Sisk © 2022
+# Python BlackJack v0.2 Copyright Jameson Sisk © 2022
 
 import random
 
+game = 0
 ace_value = 0
 player_money = 0
 in_play = True
 
 player_wins = False
+next_game = True
 
 card_list = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
 ace_value_list = ["1", "11"]
@@ -106,7 +108,7 @@ def mainloop():
                         card_quantity -= 1
                         player_total += card_value
                 print(f"Player Total: {player_total}")
-        if house_total < 15 or player_total > house_total:
+        if house_total < 15 or player_total > house_total and not player_total > 21:
             card_pick = random.choice(card_list)
             card_value = cards[card_pick]["value"]
             card_quantity = cards[card_pick]["quantity"]
@@ -149,6 +151,11 @@ def mainloop():
             print("Player wins!")
             player_wins == True
             break
+    with open("scores.txt", mode="a") as scores:
+        scores.write(f"\nGame {game}\n")
+        scores.write(f"Player Total: {player_total}")
+        scores.write(f"\nHouse Total: {house_total}")
+        scores.write(f"\nPlayer Money: {player_money}")
 
 mainloop()
 
@@ -158,8 +165,12 @@ elif player_wins == False:
     player_money -= 50
 
 in_play = False
+game += 1
 
-play_again = input("Would you like to play another game?\n")
-if play_again.lower() == "yes":
-    in_play = True
-    mainloop()
+while next_game:
+    play_again = input("Would you like to play another game?\n")
+    if play_again.lower() == "yes":
+        in_play = True
+        mainloop()
+    else:
+        break
